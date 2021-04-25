@@ -5,9 +5,13 @@
 </template>
 
 <script>
-export default {
-
-}
+    export default {
+        computed: {
+            getterCurrentCity() {
+                return this.$store.getters.allCities;
+            }
+        }
+    }
 </script>
 
 <style>

@@ -4,7 +4,7 @@
     <br>
     <Search />
     <br>
-    <br>
+    <hr>
     <Cities />
   </div>
 </template>
