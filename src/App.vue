@@ -1,16 +1,25 @@
 <template>
   <div id="app">
+    <Logo />
+    <br>
+    <Search />
+    <br>
+    <br>
     <Cities />
   </div>
 </template>
 
 <script>
 import Cities from './components/Cities.vue'
+import Search from './components/Search.vue';
+import Logo from './components/Logo.vue';
 
 export default {
   name: 'App',
   components: {
-    Cities
+    Cities,
+    Search,
+    Logo
   }
 }
 </script>
