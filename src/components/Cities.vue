@@ -3,7 +3,7 @@
   <br>
   <div class="container-fluid">
     <div class="d-flex flex-wrap col-12 flex-row justify-content-center align-items-center">
-      <div class="card col-3" v-for="city in getterCitiesList" :key="city.id" style="border-radius: 7px; margin: 10px;">
+      <div class="card col-xl-3 col-lg-5 col-md-8" v-for="city in getterCitiesList" :key="city.id" style="border-radius: 7px; margin: 10px;">
         <router-link :to="'/city/' + city.name" style="text-decoration: none; color: black"> 
           <br>
           <img class="card-img-top" :src="city.img" style="border-radius: 7px"/>

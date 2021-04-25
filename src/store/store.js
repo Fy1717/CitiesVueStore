@@ -78,7 +78,7 @@ const store = createStore({
                         .then(responseCity => {
                             if(responseCity.status === 200) {
                                 city.img = ((((responseCity.data || {}).photos || [])[0] || {}).image || {}).web || city.img;
-                                //console.log(cityObject.img)
+                                //console.log(city.img);
                             }
                         }). catch(errorForImage => {
                             console.warn(errorForImage);
