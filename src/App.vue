@@ -2,7 +2,6 @@
   <div id="app">
     <Logo />
     <br>
-    <br>
     <router-view />
   </div>
 </template>

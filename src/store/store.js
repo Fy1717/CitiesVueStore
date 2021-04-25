@@ -5,27 +5,28 @@ const store = createStore({
     state: {
         citiesList: [],
         searchText: '',
-        currentProduct: {
+        allCitiesApiUrl: 'http://api.geonames.org/citiesJSON?north=42&south=36&east=26&west=45&lang=en&username=fy1717',
+        currentCity: {
             id: 1,
             img: 'https://d13k13wj6adfdf.cloudfront.net/urban_areas/rome_web-30e1610428.jpg',
-            temperature: '28',
-            name: 'ANKARA',
-            population: '288743',
-            latitude: 'latitude'
+            temperature: 'default',
+            name: 'default',
+            population: 'default',
+            latitude: 'default'
         }
     },
     getters: {
         allCities: (state) => state.citiesList,
         getterSearchText: (state) => state.searchText,
-        getterCurrentProduct: (state) => state.currentProduct,
+        getterCurrentCity: (state) => state.currentCity,
     },
     actions: {
-       async getListOfCities({ state, commit }) {
+        async getListOfCities({ state, commit }) {
             var citiesListFromApi = [];
             var citiesResponse = [];
             var cityObject = {};
 
-            await axios.get('http://api.geonames.org/citiesJSON?north=42&south=36&east=26&west=45&lang=tr&username=fy1717')
+            await axios.get(state.allCitiesApiUrl)
                 .then(response => {
                     citiesResponse = ((response || {}).data || {}).geonames || [];
                     cityObject = {};
@@ -41,6 +42,18 @@ const store = createStore({
                         };
                         
                         if (cityObject.name && city.name.toLowerCase().includes(state.searchText.toLowerCase())) {
+                            var urlForImage = 'https://api.teleport.org/api/urban_areas/slug:' + city.name.toLowerCase() + '/images/';
+                            
+                            axios.get(urlForImage)
+                                .then(responseCity => {
+                                    if(responseCity.status === 200) {
+                                        cityObject.img = ((((responseCity.data || {}).photos || [])[0] || {}).image || {}).web || cityObject.img;
+                                        //console.log(cityObject.img)
+                                    }
+                                }). catch(errorForImage => {
+                                    console.warn(errorForImage);
+                                });
+
                             citiesListFromApi.push(cityObject);
                         }
                     });
@@ -51,14 +64,42 @@ const store = createStore({
                 }); 
             
             commit('SetCities', citiesListFromApi)
+        }, 
+        async setCurrentCity({ state, commit }, urlCityName) {
+            if(!urlCityName) {
+                urlCityName = window.location.pathname.split('/').slice(-1)[0];
+            }
+
+            state.citiesList.map((city) => {
+                if (city.name === urlCityName) {
+                    var urlForImage = 'https://api.teleport.org/api/urban_areas/slug:' + city.name.toLowerCase() + '/images/';
+                    
+                    axios.get(urlForImage)
+                        .then(responseCity => {
+                            if(responseCity.status === 200) {
+                                city.img = ((((responseCity.data || {}).photos || [])[0] || {}).image || {}).web || city.img;
+                                //console.log(cityObject.img)
+                            }
+                        }). catch(errorForImage => {
+                            console.warn(errorForImage);
+                        });
+
+                    commit('SetCity', city);
+
+                    //console.log('new city --> ', city);
+                }
+            });
         } 
     },
     mutations: {
         SetCities(state, citiesListFromApi) {
-            state.citiesList = citiesListFromApi
+            state.citiesList = citiesListFromApi;
         },
         SetSearchKeyword(state, newKeyword) {
             state.searchText = newKeyword;
+        },
+        SetCity(state, newCity) {
+            state.currentCity = newCity;
         }
     },
 })
