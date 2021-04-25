@@ -42,12 +42,10 @@ const store = createStore({
                         
                         if (cityObject.name && city.name.toLowerCase().includes(state.searchText.toLowerCase())) {
                             citiesListFromApi.push(cityObject);
-                            console.log(cityObject.name.toLowerCase());
-                            console.log(state.searchText.toLowerCase());
                         }
                     });
             
-                    console.log('ACTIONS ON STORE --> ', citiesListFromApi); 
+                    //console.log('ACTIONS ON STORE --> ', citiesListFromApi); 
                 }).catch (error => {
                     console.log(error);
                 }); 

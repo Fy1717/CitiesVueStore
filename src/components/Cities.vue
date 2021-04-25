@@ -15,9 +15,6 @@
     computed: {
       getterCitiesList() {
         return this.$store.getters.allCities;
-      },
-      cities() {
-        return this.$store.state.citiesList;
       }
     },
     mounted() {
