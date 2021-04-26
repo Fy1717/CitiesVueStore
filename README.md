@@ -1,8 +1,6 @@
 # Onedio Project - FY
 
-<h2>HELLO THERE 👋</h2> 
-
-<b>Welcome to My Test Project</b>
+<h2> Welcome to My Test Project 👋 </h2>
 
 <hr>
 
@@ -21,7 +19,7 @@
 <hr>
 
 
-## For The Project Setup and Configuration
+## For the project setup and configuration
 ```
 npm install
 ```
@@ -36,13 +34,13 @@ npm run serve
 npm run build
 ```
 
-### For Navigation Between Components
+### For navigation between components
 ```
 npm install vue-router
 ```
 
 
-### Using Axios for API Requests
+### Using axios for api requests
 ```
 npm install axios
 ```
