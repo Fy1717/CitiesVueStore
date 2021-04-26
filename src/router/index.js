@@ -1,7 +1,4 @@
 import { createWebHistory, createRouter } from "vue-router";
-//import Cities from "../components/Cities.vue";
-//import City from "../components/City.vue";
-
 import { defineAsyncComponent } from 'vue'
 
 const Cities = defineAsyncComponent(() =>

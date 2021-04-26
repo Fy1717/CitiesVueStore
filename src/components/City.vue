@@ -6,7 +6,6 @@
         <div class="card col-xl-4 col-lg-5 col-md-6 col-6" style="border-radius: 7px; margin: 10px;">
             <div class="card-body">
                 <h1>{{ getterCurrentCity.name }}</h1>
-                <h1>{{ $route.params.url }}</h1>
                 <p class="card-text"> Population <span>{{ getterCurrentCity.population }}</span></p>
                 <p class="card-text"> Temperature <span>{{ getterCurrentCity.temperature }}</span></p>
                 <p class="card-text"> Latitude <span>{{ getterCurrentCity.latitude }}</span></p>

@@ -26,80 +26,106 @@ const store = createStore({
             var citiesResponse = [];
             var cityObject = {};
 
-            await axios.get(state.allCitiesApiUrl)
-                .then(response => {
-                    citiesResponse = ((response || {}).data || {}).geonames || [];
+            async function getSecondRequest(urlForImage, cityObject) {
+                try {
+                    var responseCity = await axios.get(urlForImage);
+
+                    if (responseCity.status === 200) {
+                        cityObject.img = ((((responseCity.data || {}).photos || [])[0] || {}).image || {}).web || '';
+                        citiesListFromApi.push(cityObject);
+                        commit('SetAddCity', cityObject);
+                    }
+                } catch (err2) {
+                    commit('SetAddCity', cityObject);
+                    console.log(err2);
+                }
+            }
+
+            try {
+                var response = await axios.get(state.allCitiesApiUrl);
+            
+                citiesResponse = ((response || {}).data || {}).geonames || [];
                     cityObject = {};
             
-                    citiesResponse.map((city) => {
+                    citiesResponse.map(city => {
                         cityObject = {
                             id: city.geonameId || 0,
                             name: city.name || '',
                             population: city.population || 0, 
                             latitude: (city.lat || 0).toFixed(3),
                             temperature: '25',
-                            img: 'https://image.arrivalguides.com/1500x600/09/aaafe2acddd3f57b18e34f8382d9721b.jpg'
+                            img: 'https://d13k13wj6adfdf.cloudfront.net/urban_areas/baku_web-71bcbddb43.jpg'
                         };
                         
-                        if (cityObject.name && city.name.toLowerCase().includes(state.searchText.toLowerCase())) {
+                        if (cityObject.name) {
                             var urlForImage = 'https://api.teleport.org/api/urban_areas/slug:' + city.name.toLowerCase() + '/images/';
                             
-                            axios.get(urlForImage)
-                                .then(responseCity => {
-                                    if(responseCity.status === 200) {
-                                        cityObject.img = ((((responseCity.data || {}).photos || [])[0] || {}).image || {}).web || cityObject.img;
-                                        //console.log(cityObject.img)
-                                    }
-                                }). catch(errorForImage => {
-                                    console.warn(errorForImage);
-                                });
-
-                            citiesListFromApi.push(cityObject);
+                            getSecondRequest(urlForImage, cityObject);
                         }
                     });
-            
-                    //console.log('ACTIONS ON STORE --> ', citiesListFromApi); 
-                }).catch (error => {
-                    console.log(error);
-                }); 
-            
-            commit('SetCities', citiesListFromApi)
+            } catch (err) {
+                console.log(err);
+            }
         }, 
         async setCurrentCity({ state, commit }, urlCityName) {
             if(!urlCityName) {
                 urlCityName = window.location.pathname.split('/').slice(-1)[0];
             }
 
-            state.citiesList.map((city) => {
+            state.citiesList.map(city => {
                 if (city.name === urlCityName) {
                     var urlForImage = 'https://api.teleport.org/api/urban_areas/slug:' + city.name.toLowerCase() + '/images/';
                     
-                    axios.get(urlForImage)
-                        .then(responseCity => {
-                            if(responseCity.status === 200) {
-                                city.img = ((((responseCity.data || {}).photos || [])[0] || {}).image || {}).web || city.img;
-                                //console.log(city.img);
-                            }
-                        }). catch(errorForImage => {
-                            console.warn(errorForImage);
-                        });
+                    try {
+                        axios.get(urlForImage)
+                            .then(responseCity => {
+                                if(responseCity.status === 200) {
+                                    city.img = ((((responseCity.data || {}).photos || [])[0] || {}).image || {}).web || city.img;
+                                }
+                            }). catch(errorForImage => {
+                                console.warn(errorForImage);
+                            });
 
-                    commit('SetCity', city);
-
-                    //console.log('new city --> ', city);
+                        commit('SetCity', city);
+                    } catch (err3) {
+                        console.log(err3);
+                    }
+                    
                 }
             });
-        } 
+        }
     },
     mutations: {
-        SetCities(state, citiesListFromApi) {
-            state.citiesList = citiesListFromApi;
+        SetCities(state, citiesListFromSearch) {            
+            state.citiesList = citiesListFromSearch;
         },
         SetSearchKeyword(state, newKeyword) {
             state.searchText = newKeyword;
         },
         SetCity(state, newCity) {
             state.currentCity = newCity;
+        },
+        SetAddCity(state, addingCity) {
+            var existsControl = true;
+            var searchedList = [];
+
+            state.citiesList.map(city => {
+                if (addingCity.name === city.name) {
+                    existsControl = false;
+                }  
+            });
+
+            if (existsControl) {
+                state.citiesList.push(addingCity);
+            }
+
+            state.citiesList.map(city => {
+                if (city.name.toLowerCase().includes(state.searchText.toLowerCase())) {
+                    searchedList.push(city);
+                }  
+            });
+
+            state.citiesList = searchedList;
         }
     },
 })

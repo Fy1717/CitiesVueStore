@@ -18,8 +18,6 @@
             setSearchState() {
                 this.$store.commit('SetSearchKeyword', this.search);
                 this.$store.dispatch('getListOfCities');
-
-                //console.log(this.$store.state.searchText)
             }
         }
     }
